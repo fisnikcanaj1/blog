@@ -9,7 +9,8 @@ import './Blog.css';
 class Blog extends Component {
     state = {
         posts: [],
-        selectedPostId: null
+        selectedPostId: null,
+        error: false
     }
     
     componentDidMount() {
@@ -22,8 +23,12 @@ class Blog extends Component {
                         author: 'Max'
                     }
                 })
+
                 this.setState({ posts: updatePosts});
-            });
+            })
+            .catch(error => {
+                this.setState({ error: true });
+            });;
     }
 
     postClickedHandler = (id) => {
@@ -31,14 +36,22 @@ class Blog extends Component {
     }
 
     render () {
-        const posts = this.state.posts.map(post => {
-            return <Post 
-                title={post.title} 
-                body={post.body} 
-                key={post.id} 
-                author={post.author} 
-                clicked={() => this.postClickedHandler(post.id)} />;
-        });
+        let posts = null;
+        if(!this.state.error){
+            posts = this.state.posts.map(post => {
+                return <Post
+                    title={post.title}
+                    body={post.body}
+                    key={post.id}
+                    author={post.author}
+                    clicked={() => this.postClickedHandler(post.id)} />;
+            });
+        }
+        else {
+            posts = <p style={{ textAlign: 'center' }}>Somthing went wrong!</p>
+        }
+
+       
 
         return (
             <div>
